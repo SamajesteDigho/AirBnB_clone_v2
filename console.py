@@ -10,6 +10,8 @@ from models.state import State
 from models.city import City
 from models.amenity import Amenity
 from models.review import Review
+from datetime import datetime
+from uuid import uuid4
 
 
 class HBNBCommand(cmd.Cmd):
@@ -73,7 +75,7 @@ class HBNBCommand(cmd.Cmd):
                 pline = pline[2].strip()  # pline is now str
                 if pline:
                     # check for *args or **kwargs
-                    if pline[0] is '{' and pline[-1] is'}'\
+                    if pline[0] is '{' and pline[-1] is '}'\
                             and type(eval(pline)) is dict:
                         _args = pline
                     else:
@@ -115,13 +117,46 @@ class HBNBCommand(cmd.Cmd):
 
     def do_create(self, args):
         """ Create an object of any class"""
+        ent = args.split(" ")
+        # Get class name
+        obj_cl = ent[0]
+
         if not args:
             print("** class name missing **")
             return
-        elif args not in HBNBCommand.classes:
+        elif obj_cl not in HBNBCommand.classes:
             print("** class doesn't exist **")
             return
-        new_instance = HBNBCommand.classes[args]()
+
+        # Place Params in a dictionary
+        if len(ent) > 1:
+            params = {
+                "__class__": obj_cl,
+                "id": str(uuid4()),
+                "created_at": datetime.now().isoformat(),
+                "updated_at": datetime.now().isoformat()
+            }
+            attributes = list(HBNBCommand.classes[obj_cl].__dict__.keys())
+            for x in ent[1:]:
+                split = x.split("=")
+                attr = split[0]
+                if attr in attributes:
+                    val = split[1].replace("_", " ")
+                    val = val.replace("\"", "")
+                    try:
+                        if "." in val:
+                            val = float(val)
+                        else:
+                            val = int(val)
+                    except Exception:
+                        pass
+                    params[attr] = val
+        else:
+            params = None
+        # print("Params : {}".format(params))
+        new_instance = HBNBCommand.classes[obj_cl](**params)
+        if params is not None:
+            storage.new(new_instance)
         storage.save()
         print(new_instance.id)
         storage.save()
@@ -187,7 +222,7 @@ class HBNBCommand(cmd.Cmd):
         key = c_name + "." + c_id
 
         try:
-            del(storage.all()[key])
+            del storage.all()[key]
             storage.save()
         except KeyError:
             print("** no instance found **")
@@ -319,6 +354,7 @@ class HBNBCommand(cmd.Cmd):
         """ Help information for the update class """
         print("Updates an object with new information")
         print("Usage: update <className> <id> <attName> <attVal>\n")
+
 
 if __name__ == "__main__":
     HBNBCommand().cmdloop()

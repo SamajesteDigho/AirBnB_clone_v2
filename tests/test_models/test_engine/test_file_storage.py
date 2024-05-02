@@ -21,7 +21,7 @@ class test_fileStorage(unittest.TestCase):
         """ Remove storage file at end of tests """
         try:
             os.remove('file.json')
-        except:
+        except Exception:
             pass
 
     def test_obj_list_empty(self):
@@ -107,3 +107,12 @@ class test_fileStorage(unittest.TestCase):
         from models.engine.file_storage import FileStorage
         print(type(storage))
         self.assertEqual(type(storage), FileStorage)
+
+    def test_storage_param_created(self):
+        """ FileStorage object storage created """
+        from models.engine.file_storage import FileStorage
+        all1 = FileStorage.all()
+        exec('echo create State name="California" | python3 console.py')
+        all2 = FileStorage.all()
+
+        self.assertEqual(len(all1) + 1, len(all2))
