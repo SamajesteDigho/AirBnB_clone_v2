@@ -9,4 +9,4 @@ class State(BaseModel, Base):
     """ State class """
     __tablename__ = 'states'
     name = Column(String(128), nullable=False)
-    cities = relationship("City", back_populates="state")
+    cities = relationship("City", back_populates="state", cascade="delete")
