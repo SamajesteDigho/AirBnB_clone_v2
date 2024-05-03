@@ -3,7 +3,7 @@
 from sqlalchemy.engine import create_engine
 from os import getenv
 from sqlalchemy.orm import sessionmaker, scoped_session
-from base_model import Base, BaseModel
+from models.base_model import Base, BaseModel
 from models.amenity import Amenity
 from models.city import City
 from models.place import Place
@@ -17,7 +17,9 @@ class DBStorage:
     __engine = None
     __session = None
 
-    classes = {"User": User, "State": State, "City": City, "Amenity": Amenity, "Place": Place, "Review": Review}
+    classes = {"User": User, "State": State,
+               "City": City, "Amenity": Amenity,
+               "Place": Place, "Review": Review}
 
     def __init__(self):
         host = getenv("HBNB_MYSQL_HOST", "localhost")
@@ -31,14 +33,6 @@ class DBStorage:
         if getenv("HBNB_ENV") == "test":
             self.__sesssion.drop_all()
 
-        if getenv("HBNB_TYPE_STORAGE") is True:
-            from models.engine.db_storage import DBStorage
-            storage = DBStorage()
-        else:
-            from models.engine.file_storage import FileStorage
-            storage = FileStorage()
-        storage.reload()
-
     def all(self, cls=None):
         """Returns a dictionary of models currently in storage"""
         objects = {}
@@ -46,23 +40,23 @@ class DBStorage:
             for x in self.classes:
                 res = self.__session.query(self.classes[x]).all()
                 for obj in res:
-                    key = "{}.{}".format(x.__name__, x.id)
+                    key = "{}.{}".format(x, obj.id)
                     objects[key] = obj
         else:
             res = self.__session.query(cls).all()
             for obj in res:
-                key = "{}.{}".format(x.__name__, x.id)
+                key = "{}.{}".format(cls, obj.id)
                 objects[key] = obj
-        return obj
-    
+        return objects
+
     def new(self, obj):
         """Adds new object to storage dictionary"""
         self.__session.add(obj)
-    
+
     def save(self):
         """Saves storage dictionary to file"""
         self.__session.commit()
-    
+
     def delete(self, obj=None):
         """ Delete obj from database """
         if obj is not None:
