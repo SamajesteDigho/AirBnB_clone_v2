@@ -63,3 +63,7 @@ class FileStorage:
             if id in self.__objects:
                 del self.__objects[id]
                 self.save()
+
+    def close(self):
+        """ Here we close """
+        self.reload()
