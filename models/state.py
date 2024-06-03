@@ -15,8 +15,12 @@ class State(BaseModel, Base):
 
     if getenv("HBNB_TYPE_STORAGE") == "db":
         @property
-        def cities():
+        def cities(self):
             """ Collect the cities """
             from models import storage
-            data = storage.all(cls=State)
-            return data
+            data = storage.all(cls=City)
+            result = []
+            for _, x in data.items():
+                if x.state_id == self.id:
+                    result.append(x)
+            return result
