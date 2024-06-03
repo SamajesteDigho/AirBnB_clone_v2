@@ -3,7 +3,7 @@
 from sqlalchemy.engine import create_engine
 from os import getenv
 from sqlalchemy.orm import sessionmaker, scoped_session
-from models.base_model import Base, BaseModel
+from models.base_model import Base
 from models.amenity import Amenity
 from models.city import City
 from models.place import Place
