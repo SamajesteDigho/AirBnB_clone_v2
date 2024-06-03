@@ -14,9 +14,9 @@ class State(BaseModel, Base):
     cities = relationship("City", back_populates="state", cascade="delete")
 
     if getenv("HBNB_TYPE_STORAGE") == "db":
-        @property.getter
+        @property
         def cities():
             """ Collect the cities """
             from models import storage
-            data = storage.all(cls=City)
+            data = storage.all(cls=State)
             return data
