@@ -18,3 +18,11 @@ def index():
 def hbnb():
     """ Here the hbnb function """
     return "HBNB"
+
+
+@app.route("/c/<text>")
+def cfun(text):
+    """ Here the c_is_fun function """
+    string = text
+    string = string.replace('_', ' ')
+    return "C {}".format(string)
