@@ -26,3 +26,8 @@ def cfun(text):
     string = text
     string = string.replace('_', ' ')
     return "C {}".format(string)
+
+
+if __name__ == "__main__":
+    """ Here the initializer """
+    app.run(host="0.0.0.0", port=5000)
