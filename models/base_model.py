@@ -22,11 +22,21 @@ class BaseModel:
             self.created_at = datetime.now()
             self.updated_at = datetime.now()
         else:
-            kwargs['updated_at'] = datetime.strptime(kwargs['updated_at'],
+            keys = list(kwargs.keys())
+            if 'updated_at' in keys:
+                kwargs['updated_at'] = datetime.strptime(kwargs['updated_at'],
                                                      '%Y-%m-%dT%H:%M:%S.%f')
-            kwargs['created_at'] = datetime.strptime(kwargs['created_at'],
+            else:
+                kwargs['updated_at'] = datetime.now()
+            if 'created_at' in keys:
+                kwargs['created_at'] = datetime.strptime(kwargs['created_at'],
                                                      '%Y-%m-%dT%H:%M:%S.%f')
-            del kwargs['__class__']
+            else:
+                kwargs['created_at'] = datetime.now()
+            if 'id' not in keys:
+                self.id = str(uuid.uuid4())
+            if '_class__' in keys:
+                del kwargs['__class__']
             self.__dict__.update(kwargs)
 
     def __str__(self):
