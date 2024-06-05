@@ -8,8 +8,8 @@ from sqlalchemy.orm import relationship
 place_amenity = Table(
     "place_amenity",
     Base.metadata,
-    Column("place_id", String(60), primary_key=True, nullable=False),
-    Column("amenity_id", String(60), primary_key=True, nullable=False),
+    Column("place_id", ForeignKey("places.id"), primary_key=True, nullable=False),
+    Column("amenity_id", ForeignKey("amenities.id"), primary_key=True, nullable=False),
 )
 
 
@@ -28,5 +28,5 @@ class Place(BaseModel, Base):
     longitude = Column(Float, nullable=True)
     amenity_ids = []
     reviews = relationship("Review", cascade="delete")
-    # amenities = relationship("Amenity", secondary=place_amenity,
-    #                          viewonly=False)
+    amenities = relationship("Amenity", secondary=place_amenity,
+                             viewonly=False, back_populates="place_amenities")
